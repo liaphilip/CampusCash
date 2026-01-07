@@ -8,7 +8,6 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from "../../services/firebase";
 import { useEffect } from "react";
 
-
 export default function Budget() {
   const [budgets, setBudgets] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -28,7 +27,6 @@ export default function Budget() {
       console.error("Error fetching budgets:", error);
     }
   };
-
 
   const incomeCategories = [
     { name: "Salary", icon: "💰" },
@@ -52,7 +50,6 @@ export default function Budget() {
     setShowModal(true);
   };
 
-  /*
   const saveBudget = async () => {
     if (!month || !amount) return;
 
@@ -72,39 +69,11 @@ export default function Budget() {
       console.error("Error saving budget:", error);
     }
   };
-  */
-  const saveBudget = async () => {
-    console.log("Save clicked", { selectedCategory, month, amount });
-
-    if (!month || !amount) {
-      console.log("Missing month or amount");
-      return;
-    }
-
-    try {
-      await addDoc(collection(db, "budgets"), {
-        category: selectedCategory,
-        month,
-        limit: Number(amount),
-        spent: 0,
-        createdAt: new Date(),
-      });
-
-      console.log("Saved to Firestore");
-
-      setShowModal(false);
-      fetchBudgets();
-    } catch (error) {
-    console.error("Error saving budget:", error);
-    }
-  };
-
-
+  
 
   useEffect(() => {
-  fetchBudgets();
+    fetchBudgets();
   }, []);
-
 
   return (
     <div>

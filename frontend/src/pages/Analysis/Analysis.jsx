@@ -1,11 +1,11 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import ExpensePieChart from "../../components/ExpensePieChart";
 import BudgetWarning from "../../components/BudgetWarning";
 import CategoryList from "../../components/CategoryList";
 
 export default function Analysis() {
-  // 🔹 FROM FRIEND A (later)
+  // 🔹 FROM FRIEND A
   const categories = [
     "Money Lent",
     "Shopping",
@@ -15,26 +15,40 @@ export default function Analysis() {
     "Entertainment",
   ];
 
-  // 🔹 FROM FRIEND B (later)
+  // 🔹 FROM FRIEND B
   const budget = 5000;
 
-  // 🔹 FROM FRIEND C (later)
-  const records = [
-    { type: "expense", category: "Money Lent", amount: 2830 },
-    { type: "expense", category: "Shopping", amount: 1387 },
-    { type: "expense", category: "Food", amount: 1097 },
-    { type: "expense", category: "Transportation", amount: 689 },
-    { type: "expense", category: "Health", amount: 500 },
-    { type: "income", amount: 3617 },
-  ];
+  // 🔹 FROM FRIEND C (whole history, day-wise)
+  const records = JSON.parse(localStorage.getItem("records")) || [];
 
-  // 🔹 Calculate totals
+  // 🔹 Selected month (default = current month)
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  // 🔹 Filter records for selected month
+  const monthlyRecords = useMemo(() => {
+  const month = currentMonth.getMonth();
+  const year = currentMonth.getFullYear();
+
+  return records.filter((r) => {
+    if (!r.createdAt) return false;
+
+    const recordDate = new Date(r.createdAt + "T00:00:00");
+
+    return (
+      recordDate.getMonth() === month &&
+      recordDate.getFullYear() === year
+    );
+  });
+}, [records, currentMonth]);
+
+
+  // 🔹 Calculate totals for selected month
   const { expenseData, totalExpense, totalIncome } = useMemo(() => {
     const data = {};
     let expenseSum = 0;
     let incomeSum = 0;
 
-    records.forEach((r) => {
+    monthlyRecords.forEach((r) => {
       if (r.type === "expense") {
         data[r.category] = (data[r.category] || 0) + r.amount;
         expenseSum += r.amount;
@@ -48,29 +62,72 @@ export default function Analysis() {
       totalExpense: expenseSum,
       totalIncome: incomeSum,
     };
-  }, [records]);
+  }, [monthlyRecords]);
 
   const total = totalIncome - totalExpense;
-  const now = new Date();
+
+  // 🔹 Month navigation
+  const goPrevMonth = () => {
+    setCurrentMonth(
+      new Date(
+        currentMonth.getFullYear(),
+        currentMonth.getMonth() - 1,
+        1
+      )
+    );
+  };
+
+  const goNextMonth = () => {
+    setCurrentMonth(
+      new Date(
+        currentMonth.getFullYear(),
+        currentMonth.getMonth() + 1,
+        1
+      )
+    );
+  };
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>{now.toLocaleString()}</h2>
+      {/* 📅 Month Header */}
+      <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+        <button onClick={goPrevMonth}>◀</button>
+        <h2>
+          {currentMonth.toLocaleString("default", {
+            month: "long",
+            year: "numeric",
+          })}
+        </h2>
+        <button onClick={goNextMonth}>▶</button>
+      </div>
 
+      {/* 💰 Summary */}
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <div>EXPENSE ₹{totalExpense}</div>
         <div>INCOME ₹{totalIncome}</div>
         <div>TOTAL ₹{total}</div>
       </div>
 
+      {/* 📊 Pie Chart */}
       <ExpensePieChart expenses={expenseData} />
 
-      <CategoryList expenses={expenseData} totalExpense={totalExpense} />
+      {/* 📋 Category Breakdown */}
+      <CategoryList
+        expenses={expenseData}
+        totalExpense={totalExpense}
+      />
 
-      <BudgetWarning totalExpense={totalExpense} budget={budget} />
+      {/* ⚠️ Budget Warning */}
+      <BudgetWarning
+        totalExpense={totalExpense}
+        budget={budget}
+      />
 
+      {/* ➕ Add Record */}
       <Link to="/add-record">
-        <button style={{ marginTop: "20px" }}>➕ Add Record</button>
+        <button style={{ marginTop: "20px" }}>
+          ➕ Add Record
+        </button>
       </Link>
     </div>
   );

@@ -5,6 +5,9 @@ import { auth } from "./services/firebase";
 
 import Navbar from "./components/Navbar";
 import Categories from "./pages/Categories/Categories";
+import Records from "./pages/Records/Records";
+import Settings from "./pages/Settings/Settings";
+import AddRecord from "./pages/AddRecord/AddRecord";
 import Login from "./pages/Login/Login";
 
 export default function App() {
@@ -17,11 +20,12 @@ export default function App() {
     return () => unsub();
   }, []);
 
-  // IMPORTANT: prevents blank screen
+  // Prevent blank screen while checking auth
   if (user === undefined) {
     return <p style={{ padding: 20 }}>Checking authentication…</p>;
   }
 
+  // If not logged in, show login page
   if (!user) {
     return <Login />;
   }
@@ -33,6 +37,9 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Categories />} />
           <Route path="/categories" element={<Categories />} />
+          <Route path="/records" element={<Records />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/add-record" element={<AddRecord />} />
         </Routes>
       </div>
     </div>

@@ -1,3 +1,8 @@
 export default function Categories() {
-  return <div>Categories Page</div>;
+  return (
+    <div>
+      <h1>Categories Page</h1>
+      <p>Manage income and expense categories.</p>
+    </div>
+  );
 }

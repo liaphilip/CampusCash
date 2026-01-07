@@ -4,12 +4,31 @@ import BudgetPreview from "./components/BudgetPreview";
 import CategorySection from "./components/CategorySection";
 import SetBudgetModal from "./components/SetBudgetModal";
 
+import { collection, addDoc, getDocs } from "firebase/firestore";
+import { db } from "../../services/firebase";
+import { useEffect } from "react";
+
+
 export default function Budget() {
   const [budgets, setBudgets] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [month, setMonth] = useState("");
   const [amount, setAmount] = useState("");
+
+  const fetchBudgets = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "budgets"));
+      const data = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setBudgets(data);
+    } catch (error) {
+      console.error("Error fetching budgets:", error);
+    }
+  };
+
 
   const incomeCategories = [
     { name: "Salary", icon: "💰" },
@@ -33,22 +52,59 @@ export default function Budget() {
     setShowModal(true);
   };
 
-  const saveBudget = () => {
+  /*
+  const saveBudget = async () => {
     if (!month || !amount) return;
 
-    setBudgets([
-      ...budgets,
-      {
+    try {
+      await addDoc(collection(db, "budgets"), {
+        category: selectedCategory,
+        type: "Expense", // later we can make this dynamic
+        month,
+        limit: Number(amount),
+        spent: 0,
+        createdAt: new Date(),
+      });
+
+      setShowModal(false);
+      fetchBudgets(); // refresh preview
+    } catch (error) {
+      console.error("Error saving budget:", error);
+    }
+  };
+  */
+  const saveBudget = async () => {
+    console.log("Save clicked", { selectedCategory, month, amount });
+
+    if (!month || !amount) {
+      console.log("Missing month or amount");
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, "budgets"), {
         category: selectedCategory,
         month,
         limit: Number(amount),
         spent: 0,
-        icon: "📌",
-      },
-    ]);
+        createdAt: new Date(),
+      });
 
-    setShowModal(false);
+      console.log("Saved to Firestore");
+
+      setShowModal(false);
+      fetchBudgets();
+    } catch (error) {
+    console.error("Error saving budget:", error);
+    }
   };
+
+
+
+  useEffect(() => {
+  fetchBudgets();
+  }, []);
+
 
   return (
     <div>

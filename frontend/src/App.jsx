@@ -1,35 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
 
-function App() {
-  const [count, setCount] = useState(0)
+import Analysis from "./pages/Analysis/Analysis";
+import Budget from "./pages/Budget/Budget";
+import Accounts from "./pages/Accounts/Accounts";
+import Categories from "./pages/Categories/Categories";
+import Records from "./pages/Records/Records";
+import Settings from "./pages/Settings/Settings";
 
+export default function App() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div style={{ display: "flex" }}>
+      <Navbar />
 
-export default App
+      <div style={{ padding: "20px", flex: 1 }}>
+        <Routes>
+          <Route path="/" element={<Analysis />} />
+          <Route path="/analysis" element={<Analysis />} />
+          <Route path="/budget" element={<Budget />} />
+          <Route path="/accounts" element={<Accounts />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/records" element={<Records />} />
+          <Route path="/settings" element={<Settings />} />
+        </Routes>
+      </div>
+    </div>
+  );
+}

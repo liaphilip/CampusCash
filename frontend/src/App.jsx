@@ -7,6 +7,7 @@ import Accounts from "./pages/Accounts/Accounts";
 import Categories from "./pages/Categories/Categories";
 import Records from "./pages/Records/Records";
 import Settings from "./pages/Settings/Settings";
+import AddRecord from "./pages/AddRecord/AddRecord"; // ✅ NEW
 
 export default function App() {
   return (
@@ -22,6 +23,9 @@ export default function App() {
           <Route path="/categories" element={<Categories />} />
           <Route path="/records" element={<Records />} />
           <Route path="/settings" element={<Settings />} />
+
+          {/* ✅ NEW ROUTE */}
+          <Route path="/add-record" element={<AddRecord />} />
         </Routes>
       </div>
     </div>

@@ -45,6 +45,7 @@ export default function Accounts() {
   return (
     <div>
       <h1>Accounts</h1>
+      <p>Manage your account types and balances</p>
 
       {/* Accounts List */}
       <ul style={{ listStyle: "none", padding: 0 }}>

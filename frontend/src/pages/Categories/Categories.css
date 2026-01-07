@@ -1,0 +1,48 @@
+.categories-container {
+    padding: 20px;
+  }
+  
+  .add-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .add-box input,
+  .add-box select,
+  .add-box button {
+    padding: 8px;
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .card {
+    padding: 12px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+  }
+  
+  .card button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .income {
+    background-color: #2ecc71;
+  }
+  
+  .expense {
+    background-color: #e74c3c;
+  }
+  

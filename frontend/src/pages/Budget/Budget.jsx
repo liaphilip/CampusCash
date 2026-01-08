@@ -4,8 +4,8 @@ import BudgetPreview from "./components/BudgetPreview";
 import CategorySection from "./components/CategorySection";
 import SetBudgetModal from "./components/SetBudgetModal";
 
-import { collection, addDoc, getDocs } from "firebase/firestore";
-import { db } from "../../services/firebase";
+import { collection, addDoc, getDocs, doc } from "firebase/firestore";
+import { db, auth } from "../../services/firebase";
 import { useEffect } from "react";
 
 export default function Budget() {
@@ -15,8 +15,31 @@ export default function Budget() {
   const [month, setMonth] = useState("");
   const [amount, setAmount] = useState("");
 
+  const user = auth.currentUser;
+  const userId = user?.uid;
+
   const fetchBudgets = async () => {
-    try {
+        if (!userId) return;
+        try {
+          const budgetsRef = collection(
+            doc(db, "users", userId),
+            "budgets"
+          );
+          const querySnapshot = await getDocs(budgetsRef);
+
+          const data = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setBudgets(data);
+        } catch (error) {
+          console.error("Error fetching budgets:", error);
+        }
+      };
+  
+      
+
+      /*
       const querySnapshot = await getDocs(collection(db, "budgets"));
       const data = querySnapshot.docs.map((doc) => ({
         id: doc.id,
@@ -26,7 +49,8 @@ export default function Budget() {
     } catch (error) {
       console.error("Error fetching budgets:", error);
     }
-  };
+    */
+  
 
   const incomeCategories = [
     { name: "Salary", icon: "💰" },
@@ -51,12 +75,16 @@ export default function Budget() {
   };
 
   const saveBudget = async () => {
-    if (!month || !amount) return;
+    if (!month || !amount || !userId) return;
 
     try {
-      await addDoc(collection(db, "budgets"), {
+      const budgetsRef = collection(
+        doc(db, "users", userId),
+        "budgets"
+      );
+
+      await addDoc(budgetsRef, {
         category: selectedCategory,
-        type: "Expense", // later we can make this dynamic
         month,
         limit: Number(amount),
         spent: 0,
@@ -64,16 +92,20 @@ export default function Budget() {
       });
 
       setShowModal(false);
-      fetchBudgets(); // refresh preview
+      fetchBudgets();
     } catch (error) {
       console.error("Error saving budget:", error);
     }
   };
+
   
 
   useEffect(() => {
-    fetchBudgets();
-  }, []);
+    if (userId) {
+      fetchBudgets();
+    }
+  }, [userId]);
+
 
   return (
     <div>

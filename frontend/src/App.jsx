@@ -9,6 +9,8 @@ import Records from "./pages/Records/Records";
 import Settings from "./pages/Settings/Settings";
 import AddRecord from "./pages/AddRecord/AddRecord";
 import Login from "./pages/Login/Login";
+import Budget from "./pages/Budget/Budget";
+import Accounts from "./pages/Accounts/Accounts";
 
 export default function App() {
   const [user, setUser] = useState(undefined);
@@ -40,6 +42,8 @@ export default function App() {
           <Route path="/records" element={<Records />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/add-record" element={<AddRecord />} />
+          <Route path="/budget" element={<Budget />} />
+          <Route path="/accounts" element={<Accounts />} />
         </Routes>
       </div>
     </div>
